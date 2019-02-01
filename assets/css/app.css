@@ -7,3 +7,15 @@
     text-align: center;
 }
 
+/* .container {
+  width: 35%;
+  margin: auto;
+} */
+
+.isSelected {
+  background-color: lightblue;
+}
+
+.correct {
+  background-color: green;
+}
