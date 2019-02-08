@@ -26,17 +26,35 @@ class Starter extends React.Component {
 
   got_view(view) {
     console.log("new view", view);
+    console.log(view.game.selected.length);
     this.setState(view.game);
+    if(view.game.selected.length == 2)
+      this.canMatch()
   }
 
 
   on_guess(i) {
-    this.channel.push("guess", {index: i})
-          .receive("ok", this.got_view.bind(this))
+    var self = this;
+    var resp= this.channel.push("guess", {index: i})
+          .receive("ok", this.got_view.bind(this)
+        );
+          console.log("in matching");
+          console.log(this.state.selected.length);
+
   }
 
+canMatch(){
+setTimeout(()=>{this.channel.push("match", {})
+        .receive("ok",this.got_view.bind(this))},1000)
+
+}
+  // timeout() {
+  //   setTimeout(this.got_view(this)
+  // }
+
+
   restart() {
-    
+
   }
 
 
