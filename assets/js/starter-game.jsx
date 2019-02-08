@@ -21,6 +21,7 @@ class Starter extends React.Component {
         .join()
         .receive("ok", this.got_view.bind(this))
         .receive("error", resp => {console.log("Unable to join", resp); })
+
   }
 
   got_view(view) {
@@ -28,9 +29,14 @@ class Starter extends React.Component {
     this.setState(view.game);
   }
 
+
   on_guess(i) {
     this.channel.push("guess", {index: i})
-        .receive("ok", this.got_view.bind(this));
+          .receive("ok", this.got_view.bind(this))
+  }
+
+  restart() {
+    
   }
 
 
@@ -42,22 +48,22 @@ class Starter extends React.Component {
         <div className="board container">
           <div className="row">
             {board.slice(0,4).map((letter, i) =>
-              <Card index={i} letter={board[i]} isSelected={selected.includes(i)} isCorrected={correct.includes(i)} />)}
+              <Card index={i} letter={board[i]} on_guess={this.on_guess.bind(this, i)} isSelected={selected.includes(i)} isCorrected={correct.includes(i)} />)}
           </div>
 
           <div className="row">
-            {board.slice(4,8).map((letter, i) =>
-              <Card index={i+4} letter={board[i+4]} isSelected={selected.includes(i+4)} isCorrected={correct.includes(i+4)} />)}
+            {board.slice(0,4).map((letter, i) =>
+              <Card index={i+4} letter={board[i+4]} on_guess={this.on_guess.bind(this, i+4)} isSelected={selected.includes(i+4)} isCorrected={correct.includes(i+4)} />)}
           </div>
 
           <div className="row">
-            {board.slice(8,12).map((letter, i) =>
-              <Card index={i+8} letter={board[i+8]} isSelected={selected.includes(i+8)} isCorrected={correct.includes(i+8)} />)}
+            {board.slice(0,4).map((letter, i) =>
+              <Card index={i+8} letter={board[i+8]} on_guess={this.on_guess.bind(this, i+8)} isSelected={selected.includes(i+8)} isCorrected={correct.includes(i+8)} />)}
           </div>
 
           <div className="row">
-            {board.slice(12,16).map((letter, i) =>
-              <Card index={i+12} letter={board[i=12]} isSelected={selected.includes(i+12)} isCorrected={correct.includes(i+12)} />)}
+            {board.slice(0,4).map((letter, i) =>
+              <Card index={i+12} letter={board[i+12]} on_guess={this.on_guess.bind(this, i+12)} isSelected={selected.includes(i+12)} isCorrected={correct.includes(i+12)} />)}
           </div>
         </div>
       </div>);
@@ -73,11 +79,10 @@ let Card = (props) => {
   } else {
     selectedClass = "button"
   }
-  console.log(letter)
   return (
     <div className="column">
-      <div className={selectedClass} onClick={on_guess(i)}>
-        {letter}
+      <div className={selectedClass} onClick={props.on_guess}>
+        {props.letter}
       </div>
     </div>)
 }

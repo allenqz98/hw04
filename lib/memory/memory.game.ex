@@ -1,4 +1,4 @@
-defmodule Memory do
+defmodule Memory.Game do
 
   def new do
     %{
@@ -46,8 +46,6 @@ defmodule Memory do
 
   def check_match(game, i, j) do
     if Enum.at(game.board, i) === Enum.at(game.board, j) do
-      IO.puts(i)
-      IO.puts(j)
       game
       |> Map.put(:correct, game.correct ++ [i, j])
       |> Map.put(:selected, [])
