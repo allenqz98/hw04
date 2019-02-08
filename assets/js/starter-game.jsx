@@ -48,9 +48,7 @@ setTimeout(()=>{this.channel.push("match", {})
         .receive("ok",this.got_view.bind(this))},1000)
 
 }
-  // timeout() {
-  //   setTimeout(this.got_view(this)
-  // }
+
 
 
   restart() {

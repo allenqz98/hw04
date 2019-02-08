@@ -21,7 +21,7 @@ import game_init from "./starter-game";
 
 $(() => {
   let root = document.getElementById('root');
-
+  console.log(window.gameName);
   // Now that you are connected, you can join channels with a topic:
   if (root) {
     let channel = socket.channel("games:" + window.gameName, {})

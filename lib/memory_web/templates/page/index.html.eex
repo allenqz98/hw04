@@ -1,7 +1,15 @@
+<script>
+  function setGameName(){
+    var name = document.getElementById("gameName").value;
+    document.getElementById("anchorTag").href="/game/" + name;
+  }
+
+</script>
+
 <div class="row">
   <div class="column">
     <h1>Enter the game name</h1>
-    <input type="text" name="gameName">
-    <p><a href="/game/demo">Join Game</a></p>
+    <input type="text" id="gameName">
+    <p><a href="/game/demo" id="anchorTag" onclick="setGameName()">Join Game</a></p>
   </div>
 </div>
