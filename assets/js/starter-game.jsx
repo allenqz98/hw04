@@ -2,42 +2,37 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
-export default function game_init(root) {
-  ReactDOM.render(<Starter />, root);
+export default function game_init(root, channel) {
+  ReactDOM.render(<Starter channel={channel}/>, root);
 }
 
 class Starter extends React.Component {
   constructor(props) {
     super(props);
+
+    this.channel = props.channel;
     this.state = {
-      board: _.shuffle(["A","A","B","B","C","C","D","D",
-      "E","E","F","F","G","G","H","H"]),
+      board: [],
       selected: [],
-      correct: []
+      correct: [],
     };
+
+    this.channel
+        .join()
+        .receive("ok", this.got_view.bind(this))
+        .receive("error", resp => {console.log("Unable to join", resp); })
   }
 
-  on_clicked(index) {
-    console.log(index);
-
-    const {board, selected, correct} = this.state;
-
-    if(selected.length == 0) {
-      this.setState({selected: selected.concat(index)});
-    } else if (selected.length === 1) {
-      if (board[selected[0]] === board[index]) {
-        this.setState({correct: correct.concat(selected[0], index),selected: []});
-      } else {
-        //doesnt match
-        this.setState(
-          {selected: [selected[0], index]}
-        );
-        setTimeout(() => {
-          this.setState({selected: []})
-        }, 1500);
-      }
-    }
+  got_view(view) {
+    console.log("new view", view);
+    this.setState(view.game);
   }
+
+  on_guess(i) {
+    this.channel.push("guess", {index: i})
+        .receive("ok", this.got_view.bind(this));
+  }
+
 
   render() {
     const {board, selected, correct} = this.state;
@@ -46,23 +41,23 @@ class Starter extends React.Component {
         <p>Memory Game</p>
         <div className="board container">
           <div className="row">
-            {board.slice(0,4).map((letter,i) =>
-              <Card letter={letter} onClick={this.on_clicked.bind(this,i)} isSelected={selected.includes(i)} isCorrect={correct.includes(i)} key={i} />)}
+            {board.slice(0,4).map((letter, i) =>
+              <Card index={i} letter={board[i]} isSelected={selected.includes(i)} isCorrected={correct.includes(i)} />)}
           </div>
 
           <div className="row">
-            {board.slice(4,8).map((letter,i) =>
-              <Card letter={letter} onClick={this.on_clicked.bind(this,4+i)} isSelected={selected.includes(4+i)} isCorrect={correct.includes(4+i)} key={4+i} />)}
+            {board.slice(4,8).map((letter, i) =>
+              <Card index={i+4} letter={board[i+4]} isSelected={selected.includes(i+4)} isCorrected={correct.includes(i+4)} />)}
           </div>
 
           <div className="row">
-            {board.slice(8,12).map((letter,i) =>
-            <Card letter={letter} onClick={this.on_clicked.bind(this,8+i)} isSelected={selected.includes(8+i)} isCorrect={correct.includes(8+i)} key={8+i} />)}
+            {board.slice(8,12).map((letter, i) =>
+              <Card index={i+8} letter={board[i+8]} isSelected={selected.includes(i+8)} isCorrected={correct.includes(i+8)} />)}
           </div>
 
           <div className="row">
-            {board.slice(12,16).map((letter,i) =>
-              <Card letter={letter} onClick={this.on_clicked.bind(this,12+i)} isSelected={selected.includes(12+i)} isCorrect={correct.includes(12+i)} key={12+i} />)}
+            {board.slice(12,16).map((letter, i) =>
+              <Card index={i+12} letter={board[i=12]} isSelected={selected.includes(i+12)} isCorrected={correct.includes(i+12)} />)}
           </div>
         </div>
       </div>);
@@ -70,13 +65,6 @@ class Starter extends React.Component {
 }
 
 let Card = (props) => {
-  let display;
-  if (props.isSelected || props.isCorrect) {
-    display = props.letter;
-  } else {
-    display = "_";
-  }
-
   let selectedClass;
   if (props.isSelected) {
     selectedClass = "button isSelected"
@@ -85,15 +73,11 @@ let Card = (props) => {
   } else {
     selectedClass = "button"
   }
-
+  console.log(letter)
   return (
-    <div className="column" onClick={() => {
-      if (!props.isSelected && !props.isCorrect) {
-        props.onClick();
-      }
-    }}>
-      <div className={selectedClass}>
-        {display}
+    <div className="column">
+      <div className={selectedClass} onClick={on_guess(i)}>
+        {letter}
       </div>
     </div>)
 }
