@@ -31,7 +31,6 @@ defmodule Memory.Game do
 
   def guess(game, index) do
     IO.inspect(game)
-    IO.inspect(length(game.selected))
     if !Enum.member?(game.correct, index) do
       if length(game.selected) < 2 do
         IO.puts("adding")
